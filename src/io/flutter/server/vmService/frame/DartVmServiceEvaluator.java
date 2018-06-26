@@ -50,6 +50,11 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
     PsiElement element = null;
     PsiFile psiFile = null;
     final List<VirtualFile> libraryFiles = new ArrayList<>();
+    if (isolateId == null) {
+      callback.errorOccurred("No running isolate.");
+      return;
+    }
+
     // Turn off pausing on exceptions as it is confusing to mouse over an expression
     // and to have that trigger pausing at an exception.
     myDebugProcess.getVmServiceWrapper().setExceptionPauseMode(ExceptionPauseMode.None);
@@ -94,10 +99,6 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
       libraryFiles.addAll(DartResolveUtil.findLibrary(psiFile));
     }
 
-    if (isolateId == null) {
-      wrappedCallback.errorOccurred("No running isolate.");
-      return;
-    }
     final DartClass dartClass = element != null ? PsiTreeUtil.getParentOfType(element, DartClass.class) : null;
     final String dartClassName = dartClass != null ? dartClass.getName() : null;
 
